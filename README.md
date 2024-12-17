@@ -4,5 +4,5 @@ This LabVIEW Driver provides J1939-22 support for CAN-FD using a custom implemen
 
 ## Minimum Required Software Versions
 
-NI LabVIEW 2021 SP1
-NI XNET 21.5
+* NI LabVIEW 2021 SP1
+* NI XNET 21.5
