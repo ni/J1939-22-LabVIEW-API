@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ASAM AE MCD-2 NET Field Bus Data Exchange Format 4.1.2
+(C) by ASAM e.V., 2017. Any use is limited to the scope described in the license terms. The license terms can be viewed at http://www.asam.net/license/
+-->
+<xs:schema xmlns:all="http://www.asam.net/xml/fbx/all" xmlns:asr30cannm="http://www.asam.net/xml/fbx/nm/cannm/asr30" xmlns:asr30cantp="http://www.asam.net/xml/fbx/tp/cantp/asr30" xmlns:asr30frnm="http://www.asam.net/xml/fbx/nm/frnm/asr30" xmlns:asr30frtp="http://www.asam.net/xml/fbx/tp/frtp/asr30" xmlns:asr30nm="http://www.asam.net/xml/fbx/nm/asr30" xmlns:asr30tp="http://www.asam.net/xml/fbx/tp/asr30" xmlns:can="http://www.asam.net/xml/fbx/can" xmlns:flexray="http://www.asam.net/xml/fbx/flexray" xmlns:fx="http://www.asam.net/xml/fbx" xmlns:ho="http://www.asam.net/xml" xmlns:lin="http://www.asam.net/xml/fbx/lin" xmlns:most="http://www.asam.net/xml/fbx/most" xmlns:ttcan="http://www.asam.net/xml/fbx/ttcan" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ethernet="http://www.asam.net/xml/fbx/ethernet" xmlns:it="http://www.asam.net/xml/fbx/it" xmlns:service="http://www.asam.net/xml/fbx/services" targetNamespace="http://www.asam.net/xml/fbx/all" elementFormDefault="qualified" attributeFormDefault="unqualified" version="3.0.2">
+	<xs:import namespace="http://www.asam.net/xml" schemaLocation="harmonizedObjects.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx" schemaLocation="fibex.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/can" schemaLocation="fibex4can.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/flexray" schemaLocation="fibex4flexray.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/lin" schemaLocation="fibex4lin.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/most" schemaLocation="fibex4most.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/ethernet" schemaLocation="fibex4ethernet.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/it" schemaLocation="fibex4it.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/services" schemaLocation="fibex4services.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/nm/cannm/asr30" schemaLocation="fibex4cannmASR30.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/tp/cantp/asr30" schemaLocation="fibex4cantpASR30.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/nm/frnm/asr30" schemaLocation="fibex4frnmASR30.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/tp/frtp/asr30" schemaLocation="fibex4frtpASR30.xsd"/>
+	<xs:import namespace="http://www.asam.net/xml/fbx/ttcan" schemaLocation="fibex4ttcan.xsd"/>
+	<xs:complexType name="CONNECTOR-MAPPING-TYPE">
+		<xs:annotation>
+			<xs:documentation>Content model for the entity CONNECTOR-MAPPING. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:group ref="all:COMMON-MAPPING-DETAILS"/>
+			<xs:element name="SOURCE" type="all:OPTIONAL-CONNECTOR-REF-TYPE">
+				<xs:annotation>
+					<xs:documentation>Source destination of the referencing mapping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TARGET" type="all:OPTIONAL-CONNECTOR-REF-TYPE">
+				<xs:annotation>
+					<xs:documentation>Target destination of the referencing mapping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SYNC-NM-BUS-STATE" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Definition of NM synchronization between source and target connector.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:token">
+						<xs:enumeration value="SELECTIVE-NETWORK-MODE"/>
+						<xs:enumeration value="SYNCHRONOUS-NETWORK-MODE"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FRAME-MAPPINGS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Top level element of all frame mappings of a connector mapping.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="FRAME-MAPPING" type="all:FRAME-MAPPING-TYPE" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Uni diectional mapping of frames and signals of a channel mapping.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MANUFACTURER-EXTENSION" type="fx:MANUFACTURER-CONNECTOR-MAPPING-EXTENSION" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reserved space providing schema extendibility to enable manufacturers to use FIBEX for their proper needs without affecting the FIBEX standard. See the derived example schema fibex4sulzer.xsd for a manufacturer speicifc extension enabling the manufacturer to validate the extended content against a proper specification.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EXPANSIVE-MAPPING-TYPE">
+		<xs:annotation>
+			<xs:documentation>Extended content model for the entity EXPANSIVE-MAPPING (a specialiced OPTIMISED-MAPPING).</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="all:OPTIMISED-MAPPING-TYPE">
+				<xs:sequence>
+					<xs:element name="SOURCE">
+						<xs:annotation>
+							<xs:documentation>Source of an expansive mapping may either be a certain bit or a fixed value.</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:choice>
+								<xs:element ref="fx:BIT-POSITION"/>
+								<xs:element name="BIT-MASK" type="xs:boolean"/>
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="TARGET" type="all:SNIPPET-TYPE">
+						<xs:annotation>
+							<xs:documentation>Target destination of expansive mapping.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FRAME-MAPPING-TYPE">
+		<xs:annotation>
+			<xs:documentation>Content model for the entity FRAME-MAPPING.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:group ref="all:COMMON-MAPPING-DETAILS"/>
+			<xs:element name="SOURCE">
+				<xs:annotation>
+					<xs:documentation>Source destination of the referencing mapping.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="all:OPTIONAL-FRAME-TRIGGERING-REF-TYPE">
+							<xs:sequence>
+								<xs:element name="TIME-OUT" type="xs:duration" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Value which specifies the maximum interval between two subsequently received frames. After Timeout the default value of the frame will be transmitted if available.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TARGET">
+				<xs:annotation>
+					<xs:documentation>Target destination of the referencing mapping.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="all:OPTIONAL-FRAME-TRIGGERING-REF-TYPE">
+							<xs:sequence>
+								<xs:element name="GATEWAY-DEBOUNCE-TIME" type="xs:duration" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Minimum interval between two susequent target frames</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="GATEWAY-CYCLE-TIME" type="xs:duration" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Cycle time of gateway functionality</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="GATEWAY-SEND-CYCLE-METHOD" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Describes the trigger condition for the send cycle.
+Parameters:
+STANDARD specifies a sending cycle that runs independently from the timing of the received frame(s) with the typical cycle time of a target frame.
+BACKUP: In this case the sending is triggered by one or more source frames. Only in case of the absence of that triggering the Gateway ensures that the send operation is performed at leased after the maximum cycle time of the target frame.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:token">
+											<xs:enumeration value="STANDARD"/>
+											<xs:enumeration value="BACKUP"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="GATEWAY-SEND-BUFFER-METHOD" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Describes the buffer method for the target frame.
+Parameters:
+NONE: no buffer is used.
+STANDARD: The target frame is buffered in a queue.
+HISTORY: The target frame (of opType Status) on MOST is buffered for notification with history.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:choice minOccurs="0">
+				<xs:element name="PLAIN-MAPPING">
+					<xs:annotation>
+						<xs:documentation>The entire source frame is mapped as it is onto the target frame (what in general is only possible inside of a common platform). In this case source and target frame should be the identical object.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="all:TRIGGER-CONDITION" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="PDU-MAPPINGS">
+					<xs:annotation>
+						<xs:documentation>Top level element of all PDU mappings of a frame mapping.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="PDU-MAPPING" type="all:PDU-MAPPING-TYPE" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Uni directional mapping of PDUs of a specific frame mapping.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="MANUFACTURER-EXTENSION" type="fx:MANUFACTURER-FRAME-MAPPING-EXTENSION" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reserved space providing schema extendibility to enable manufacturers to use FIBEX for their proper needs without affecting the FIBEX standard. See the derived example schema fibex4sulzer.xsd for a manufacturer speicifc extension enabling the manufacturer to validate the extended content against a proper specification.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GATEWAY-TYPE" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Content model for the entity GATEWAY. Platform-specific extensions are not possible, to maintain the capability to describe multi-platform networks.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="fx:GATEWAY-TYPE">
+				<xs:sequence>
+					<xs:element name="CONNECTOR-MAPPINGS" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Top level element of all connector mappings of a gateway.</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="CONNECTOR-MAPPING" type="all:CONNECTOR-MAPPING-TYPE" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Uni diectional mapping of frames and signals from source connector to target connector.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="GW-DIAGNOSIS-MAPPINGS" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="GW-DIAGNOSIS-MAPPING" type="all:GW-DIAGNOSIS-MAPPING-TYPE" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Top level element of all diagnosis mapping data of a gateway.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GW-DIAGNOSIS-MAPPING-TYPE">
+		<xs:annotation>
+			<xs:documentation>Content model for the entity DIAGNOSIS-MAPPING. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TARGET" type="all:OPTIONAL-CONNECTOR-REF-TYPE">
+				<xs:annotation>
+					<xs:documentation>Target destination of the referencing mapping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GW-DIAGNOSIS-DATA" type="all:GW-DIAGNOSIS-DATA" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GW-DIAGNOSIS-DATA">
+		<xs:annotation>
+			<xs:documentation>Gateway specific diagnosis data</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TARGET-ADDRESS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Diagnostic target address</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ABSOLUTELY-SCHEDULED-TIMINGS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time behavior of a diagnosis mapping in a sequence of exact timing types.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ABSOLUTELY-SCHEDULED-TIMING" type="fx:ABSOLUTELY-SCHEDULED-TIMING-TYPE" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Exact time behavior of a diagnosis mapping into a guarnateed time slot e.g. on a FlexRay connector.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ECU-REFS" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="fx:ECU-REF" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MANUFACTURER-EXTENSION" type="fx:MANUFACTURER-GW-DIAGNOSIS-DATA-EXTENSION" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reserved space providing schema extendibility to enable manufacturers to use FIBEX for their proper needs without affecting the FIBEX standard. See the derived example schema fibex4sulzer.xsd for a manufacturer speicifc extension enabling the manufacturer to validate the extended content against a proper specification.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OPTIMISED-MAPPING-TYPE" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Content model for the abstract entity OPTIMISED-MAPPING. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:group ref="all:COMMON-MAPPING-DETAILS"/>
+			<xs:element name="COPY-TYPE" type="xs:token" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Copy type of the optimised mapping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SEQUENCE-NUMBER" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sequence in which the mapping functions are performed. The mapping functions of all source frames are numbered independently starting at zero.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SIGNAL-MAPPING-REFS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>referencing those signal mappings that are optimized by the receiver.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SIGNAL-MAPPING-REF" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>referencing a signal mapping that is optimized by the receiver.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:attribute name="ID-REF" type="xs:IDREF" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MANUFACTURER-EXTENSION" type="fx:MANUFACTURER-OPTIMISED-MAPPING-EXTENSION" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reserved space providing schema extendibility to enable manufacturers to use FIBEX for their proper needs without affecting the FIBEX standard. See the derived example schema fibex4sulzer.xsd for a manufacturer speicifc extension enabling the manufacturer to validate the extended content against a proper specification.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OPTIONAL-CONNECTOR-REF-TYPE">
+		<xs:annotation>
+			<xs:documentation>For reusability the content model for an optional connector referencence is specified using a type definition.</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element ref="fx:CONNECTOR-REF"/>
+			<xs:element ref="all:GW-INTERNAL"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="OPTIONAL-FRAME-TRIGGERING-REF-TYPE">
+		<xs:annotation>
+			<xs:documentation>For reusability the content model for an optional frame triggering referencence is specified using a type definition.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice>
+				<xs:element ref="fx:FRAME-TRIGGERING-REF"/>
+				<xs:element ref="all:GW-INTERNAL"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="DEFAULT-VALUE" type="xs:double">
+					<xs:annotation>
+						<xs:documentation>Value which will be distributed if no frame has been received since last sending; if no value is specified the old value will be sent.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DEFAULT-BYTE-VALUES">
+					<xs:annotation>
+						<xs:documentation>Byte values which will be distributed if no frame has been received since last sending; if no value is specified the old value will be sent</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="fx:BYTE-VALUE" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OPTIONAL-PDU-TRIGGERING-REF-TYPE">
+		<xs:annotation>
+			<xs:documentation>For reusability the content model for an optional PDU triggering referencence is specified using a type definition.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice>
+				<xs:element ref="fx:PDU-TRIGGERING-REF"/>
+				<xs:element ref="all:GW-INTERNAL"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="DEFAULT-VALUE" type="xs:double">
+					<xs:annotation>
+						<xs:documentation>Value which will be distributed if no PDU has been received since last sending; if no value is specified the old value will be sent.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DEFAULT-BYTE-VALUES">
+					<xs:annotation>
+						<xs:documentation>Byte values which will be distributed if no PDU has been received since last sending; if no value is specified the old value will be sent</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="fx:BYTE-VALUE" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OPTIONAL-SIGNAL-INSTANCE-REF-TYPE">
+		<xs:annotation>
+			<xs:documentation>For reusability the content model for an optional signal instance reference is specified using a type definition.</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element ref="fx:SIGNAL-INSTANCE-REF"/>
+			<xs:element ref="all:GW-INTERNAL"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="PDU-MAPPING-TYPE">
+		<xs:annotation>
+			<xs:documentation>Content model for the entity PDU-MAPPING.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:group ref="all:COMMON-MAPPING-DETAILS"/>
+			<xs:element name="SOURCE" type="all:SOURCE"/>
+			<xs:element name="TARGET" type="all:TARGET"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="PLAIN-MAPPING">
+					<xs:annotation>
+						<xs:documentation>The entire source frame is mapped as it is onto the target PDU (what in general is only possible inside of a common platform). In this case source and target PDU should be the identical object.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="all:TRIGGER-CONDITION" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="SIGNAL-MAPPINGS">
+					<xs:annotation>
+						<xs:documentation>Top level element of all signal mappings of a PDU mapping.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="SIGNAL-MAPPING" type="all:SIGNAL-MAPPING-TYPE" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Uni directional mapping of signals of a specific PDU mapping.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="OPTIMISED-MAPPINGS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Top level element of all optimised mappings of a PDU mapping.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SNIPPET-MAPPINGS" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Top level element of all snippet mappings of a PDU mapping.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="SNIPPET-MAPPING" type="all:SNIPPET-MAPPING-TYPE" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Uni directional mapping between data areas of a specific PDU mapping.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="EXPANSIVE-MAPPINGS" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Top level element of all expansive mappings of a PDU mapping.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="EXPANSIVE-MAPPING" type="all:EXPANSIVE-MAPPING-TYPE" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Mapping of a fixed or runtime value into the payload of the target PDU. This is needed to optimize a signal mapping where the targets BIT-LENGTH exceeds the source.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MANUFACTURER-EXTENSION" type="fx:MANUFACTURER-PDU-MAPPING-EXTENSION" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SOURCE">
+		<xs:annotation>
+			<xs:documentation>Source destination of the referencing mapping.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="all:OPTIONAL-PDU-TRIGGERING-REF-TYPE">
+				<xs:sequence>
+					<xs:element name="TIME-OUT" type="xs:duration" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Value which specifies the maximum interval between two subsequently received PDUs. After Timeout the default value of the PDU will be transmitted if available.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TARGET">
+		<xs:annotation>
+			<xs:documentation>Target destination of the referencing mapping.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="all:OPTIONAL-PDU-TRIGGERING-REF-TYPE">
+				<xs:sequence>
+					<xs:element name="GATEWAY-DEBOUNCE-TIME" type="xs:duration" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Minimum interval between two susequent target PDUs</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GATEWAY-CYCLE-TIME" type="xs:duration" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Cycle time of gateway functionality</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GATEWAY-SEND-CYCLE-METHOD" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Describes the trigger condition for the send cycle.
+Parameters:
+STANDARD specifies a sending cycle that runs independently from the timing of the received PDU(s) with the typical cycle time of a target PDU.
+BACKUP: In this case the sending is triggered by one or more source PDUs. Only in case of the absence of that triggering the Gateway ensures that the send operation is performed at leased after the maximum cycle time of the target PDU.</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:token">
+								<xs:enumeration value="STANDARD"/>
+								<xs:enumeration value="BACKUP"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="GATEWAY-SEND-BUFFER-METHOD" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Describes the buffer method for the target PDU.
+Parameters:
+NONE: no buffer is used.
+STANDARD: The target frame is buffered in a queue.
+HISTORY: The target frame (of opType Status) on MOST is buffered for notification with history.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SIGNAL-MAPPING-TYPE">
+		<xs:annotation>
+			<xs:documentation>Content model for the entity SIGNAL-MAPPING.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="fx:IDENTIFIABLE-ELEMENT-TYPE">
+				<xs:sequence>
+					<xs:group ref="all:COMMON-MAPPING-DETAILS"/>
+					<xs:element name="SOURCE" type="all:OPTIONAL-SIGNAL-INSTANCE-REF-TYPE">
+						<xs:annotation>
+							<xs:documentation>Source destination of the referencing mapping.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TARGET" type="all:OPTIONAL-SIGNAL-INSTANCE-REF-TYPE">
+						<xs:annotation>
+							<xs:documentation>Target destination of the referencing mapping.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="all:TRIGGER-CONDITION" minOccurs="0"/>
+					<xs:element name="MANUFACTURER-EXTENSION" type="fx:MANUFACTURER-SIGNAL-MAPPING-EXTENSION" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Reserved space providing schema extendibility to enable manufacturers to use FIBEX for their proper needs without affecting the FIBEX standard. See the derived example schema fibex4sulzer.xsd for a manufacturer speicifc extension enabling the manufacturer to validate the extended content against a proper specification.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SNIPPET-MAPPING-TYPE">
+		<xs:annotation>
+			<xs:documentation>Extended content model for the entity SNIPPET-MAPPING (a specialiced OPTIMISED-MAPPING).</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="all:OPTIMISED-MAPPING-TYPE">
+				<xs:sequence>
+					<xs:element name="SOURCE" type="all:SNIPPET-TYPE">
+						<xs:annotation>
+							<xs:documentation>Source destination of optimised mapping.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TARGET" type="all:SNIPPET-TYPE">
+						<xs:annotation>
+							<xs:documentation>Target destination of optimised mapping.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SNIPPET-TYPE" abstract="false">
+		<xs:annotation>
+			<xs:documentation>For reusability the content model for bit snippets (used for optimised mapping adressing) is specified using a type definition. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="fx:BIT-POSITION"/>
+			<xs:element ref="ho:BIT-LENGTH"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="GW-INTERNAL" fixed="true">
+		<xs:annotation>
+			<xs:documentation>A flag indicating that the source resp. target of a GW-MAPPING is internaly inside of the gateway application.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:boolean"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TRIGGER-CONDITION">
+		<xs:annotation>
+			<xs:documentation>Gateway specific trigger condition of target destination</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:token">
+				<xs:enumeration value="IMMEDIATE"/>
+				<xs:enumeration value="ON-CHANGE"/>
+				<xs:enumeration value="NONE"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:group name="COMMON-MAPPING-DETAILS">
+		<xs:annotation>
+			<xs:documentation>Common attributes for all mapping entities.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MAPPING-REVISIONS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Containing a (gateway) mappings change history</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MAPPING-REVISION" type="ho:REVISION-TYPE" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Describing a (gateway) mappings state</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ROUTING-ID" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Routing ID of a gateway mapping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+</xs:schema>
